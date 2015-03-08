@@ -52,4 +52,8 @@ class UsersController < ApplicationController
     @user = User.find params[:id]
     @commands = @user.commands
   end
+
+  def index
+    @users = User.all
+  end
 end

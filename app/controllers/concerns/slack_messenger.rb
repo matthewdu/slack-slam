@@ -47,6 +47,16 @@ module SlackMessenger extend ActiveSupport::Concern
     when "trivia"
       question = get_trivia_question
       post_message(request, question)
+    when "weather"
+      response = JSON.parse(RestClient.get("https://george-vustrey-weather.p.mashape.com/api.php?location=#{words[2..-1].join("+")}",
+          "X-Mashape-Key" => ENV['MASHAPE_API_KEY'],
+          "Accept" => "application/json"),
+          :symbolize_names => true)
+      if response[0].has_key?(:code)
+        update_message(request, "Could not find weather for `#{words[2..-1].join(" ")}`")
+      else
+        update_message(request, "In #{words[2..-1].join(" ")}, today is #{response[0][:condition]} with a high of #{response[0][:high_celsius]} degrees and a low of #{response[0][:low_celsius]} degrees.")
+      end
     else
       if words.fetch(1, nil)
         key = words.fetch(1, nil)

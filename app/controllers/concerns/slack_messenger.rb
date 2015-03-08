@@ -44,6 +44,9 @@ module SlackMessenger extend ActiveSupport::Concern
           message += "#{command[:key]}: #{command[:value]}\n"
         end
         post_message(request, message)
+    when "trivia"
+      question = get_trivia_question
+      post_message(request, question)
     else
       if words.fetch(1, nil)
         key = words.fetch(1, nil)
@@ -79,5 +82,13 @@ module SlackMessenger extend ActiveSupport::Concern
       :ts      => request[:timestamp],
       :text    => message
     )
+  end
+
+  def get_trivia_question
+    response = JSON.parse(RestClient.get('http://jservice.io/api/random'),
+      :symbolize_names => true)
+    question = response.first[:question]
+    category = response.first[:category][:title]
+    message = "Category: #{category}\n Question: #{question}"
   end
 end

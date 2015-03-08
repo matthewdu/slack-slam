@@ -112,12 +112,18 @@ module SlackMessenger extend ActiveSupport::Concern
         "Accept" => "application/json"),
         :symbolize_names => true)
       update_message(request, "#{response[:quote]} --#{response[:author]}")
+    when "help"
+      update_message(request, user_url(user))
     else
       if words.fetch(1, nil)
         key = words.fetch(1, nil)
         value = user.commands.find_by(:key => key).value
         if value
-          update_message(request, value)
+          if value =~ /\.gif\z/
+            post_message(request, value)
+          else
+            update_message(request, value)
+          end 
         else
           update_message(request, "No mapping found for `#{key}`")
         end
@@ -129,12 +135,18 @@ module SlackMessenger extend ActiveSupport::Concern
 
   def post_message(request, message)
     user = User.find_by(:slack_user_id => request[:slack_user_id])
+    image_url = message if /\.gif\z/ =~ message
     RestClient.post(
       'https://slack.com/api/chat.postMessage',
       :token   => user.access_token,
       :channel => request[:slack_channel_id],
       :text    => message,
       :as_user => true,
+      :attachments => {
+        :author_name => 'slam',
+        :fallback => message,
+        :image_url => image_url
+      },
       :unfurl_media => true,
       :unfurl_links => true
     )
@@ -146,10 +158,9 @@ module SlackMessenger extend ActiveSupport::Concern
       'https://slack.com/api/chat.update',
       :token   => user.access_token,
       :channel => request[:slack_channel_id],
-      :ts      => request[:timestamp],
       :text    => message,
-      :unfurl_media => true,
-      :unfurl_links => true
+      :ts      => request[:timestamp],
+      :as_user => true,
     )
   end
 

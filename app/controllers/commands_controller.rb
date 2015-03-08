@@ -17,8 +17,4 @@ class CommandsController < ApplicationController
     params.permit(:token, :team_id, :team_domain, :channel_id, :channel_name, :timestamp, :user_id, :user_name, :text, :trigger_word)
   end
 
-  def post_to_slack(opts = {})
-    RestClient.post("https://slack.com/api/chat.postMessage")
-  end
-
 end

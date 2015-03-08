@@ -1,8 +1,10 @@
 class UsersController < ApplicationController
+  def home
+  end
+
   def new
     client = OAuth2::Client.new(ENV['SLACK_CLIENT_ID'], ENV['SLACK_CLIENT_SECRET'], :site => 'https://slack.com')
-    redirect_to client.auth_code.authorize_url(:redirect_url => callback_users_url)
-
+    redirect_to client.auth_code.authorize_url(:redirect_url => callback_users_url, :scope => 'identify,read,post,client')
   end
 
   def callback
@@ -19,8 +21,8 @@ class UsersController < ApplicationController
     slack_team_id = slack_user[:team_id]
 
     if team = Team.find_by(:slack_team_id => slack_team_id)
-      if user = team.users.find_by(:slack_user_id => slack_user[:user_id])
-        user.update(:access_token => response[:access_token])
+      if @user = team.users.find_by(:slack_user_id => slack_user[:user_id])
+        @user.update(:access_token => response[:access_token])
       else
         team.users.create(
           :slack_name    => slack_user[:user],
@@ -30,11 +32,11 @@ class UsersController < ApplicationController
       end
     else
       new_team = Team.new(
-        :slack_team_id  => slack_user[:team_id],
+        :slack_team_id   => slack_user[:team_id],
         :slack_team_name => slack_user[:team]
       )
       if new_team.save
-        new_team.users.create(
+        @user = new_team.users.create(
           :slack_name    => slack_user[:user],
           :slack_user_id => slack_user[:user_id],
           :access_token  => response[:access_token]
@@ -43,6 +45,11 @@ class UsersController < ApplicationController
         # ERRRORR
       end
     end
-    render :nothing => true
+    redirect_to(@user)
+  end
+
+  def show
+    @user = User.find params[:id]
+    @commands = [] || @user.commands
   end
 end

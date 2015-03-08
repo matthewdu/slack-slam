@@ -25,13 +25,13 @@ module SlackMessenger extend ActiveSupport::Concern
     when "add"
       key = words.fetch(2, nil)
       value = words[3..-1].join(" ")
-      if (key && value)
+      if key && value
         if command = user.commands.find_by(:key => key)
           command.update(:value => value)
-          update_message(request, "#{key} has been updated to #{value}") #change to update
+          update_message(request, "`#{key}` has been updated to `#{value}`") #change to update
         else
           if user.commands.create(:key => key, :value => value)
-            update_message(request, "#{key} has been mapped to #{value}") #change to update
+            update_message(request, "`#{key}` has been mapped to `#{value}`") #change to update
           else
             #ERROR
           end
@@ -39,14 +39,39 @@ module SlackMessenger extend ActiveSupport::Concern
       end
     when "list"
       list_commands = user.commands
-        message = ""
-        list_commands.each do |command|
-          message += "#{command[:key]}: #{command[:value]}\n"
+      message = ""
+      list_commands.each do |command|
+        message += "#{command[:key]}: #{command[:value]}\n"
+      end
+      update_message(request, message)
+    when "save"
+      key = words.fetch(2, nil)
+      if key
+        user = User.find_by(:slack_user_id => request[:slack_user_id])
+        channel_api_uri = 'https://slack.com/api/channels.history'
+        channel_api_uri = 'https://slack.com/api/groups.history' if request[:slack_channel_id][0].downcase == 'g'
+        response = JSON.parse(RestClient.post(
+          channel_api_uri,
+          :token   => user.access_token,
+          :channel => request[:slack_channel_id]
+        ), :symbolize_names => true)
+
+        response[:messages].each do |message|
+          if message[:user] != user.slack_user_id && message[:type] == 'message'
+            if command = user.commands.find_by(:key => key)
+              command.update(:value => message[:text])
+              update_message(request, "`#{key}` has been mapped to `#{message[:text]}`")
+            else
+              user.commands.create(:key => key, :value => message[:text])
+              update_message(request, "`#{key}` has been mapped to `#{message[:text]}`")
+            end
+            return
+          end
         end
-        post_message(request, message)
+      end
     when "trivia"
       question = get_trivia_question
-      post_message(request, question)
+      update_message(request, question)
     when "weather"
       response = JSON.parse(RestClient.get("https://george-vustrey-weather.p.mashape.com/api.php?location=#{words[2..-1].join("+")}",
           "X-Mashape-Key" => ENV['MASHAPE_API_KEY'],
@@ -62,9 +87,9 @@ module SlackMessenger extend ActiveSupport::Concern
         key = words.fetch(1, nil)
         value = user.commands.find_by(:key => key).value
         if value
-          post_message(request, value)
+          update_message(request, value)
         else
-          post_message(request, "No mapping found for #{key}")
+          update_message(request, "No mapping found for `#{key}`")
         end
       else
         update_message(request, "No command entered.")

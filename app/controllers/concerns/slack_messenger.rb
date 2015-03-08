@@ -69,9 +69,6 @@ module SlackMessenger extend ActiveSupport::Concern
           end
         end
       end
-    when "trivia"
-      question = get_trivia_question
-      update_message(request, question)
     when "weather"
       response = JSON.parse(RestClient.get("https://george-vustrey-weather.p.mashape.com/api.php?location=#{words[2..-1].join("+")}",
           "X-Mashape-Key" => ENV['MASHAPE_API_KEY'],
@@ -87,6 +84,14 @@ module SlackMessenger extend ActiveSupport::Concern
         "X-Mashape-Key" => ENV['MASHAPE_API_KEY'],
         "Accept" => "application/json")
       post_message(request, response)
+    when "trivia"
+      question = get_trivia_question(request)
+      post_message(request, question)
+    when "trivia-ans"
+      trivia_answer = TriviaAnswer.where(:channel_id => request[:slack_channel_id])
+      if !trivia_answer.last.nil?
+        post_message(request, "Answer: #{trivia_answer.last.answer}")
+      end
     else
       if words.fetch(1, nil)
         key = words.fetch(1, nil)
@@ -124,9 +129,10 @@ module SlackMessenger extend ActiveSupport::Concern
     )
   end
 
-  def get_trivia_question
+  def get_trivia_question(request)
     response = JSON.parse(RestClient.get('http://jservice.io/api/random'),
       :symbolize_names => true)
+    TriviaAnswer.create(:channel_id => request[:slack_channel_id], :answer => response.first[:answer])
     question = response.first[:question]
     category = response.first[:category][:title]
     message = "Category: #{category}\n Question: #{question}"

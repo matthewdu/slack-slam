@@ -57,7 +57,7 @@ module SlackMessenger extend ActiveSupport::Concern
         ), :symbolize_names => true)
 
         response[:messages].each do |message|
-          if message[:attachments].present? && message[:attachments][:image_url].present?
+          if message[:attachments].present? && message[:attachments][0][:image_url].present?
             value = message[:attachments][0][:image_url]
             if command = user.commands.find_by(:key => key)
               command.update(:value => value)

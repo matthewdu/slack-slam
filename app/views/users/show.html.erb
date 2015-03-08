@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1><%= @user.slack_name %>'s commands</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <table id="commands" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      <% @commands.each do |command| %>
+        <tr>
+          <td><%= command.key %></td>
+          <td><%= command.value %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h3>Instructions</h3>
+
+    <span>Add a new key</span>
+    <pre>slam! add 'key' 'value'</pre>
+
+    <span>Reference a key</span>
+    <pre>slam! 'key'</pre>
+  </div>
+</div>

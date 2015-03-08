@@ -83,14 +83,14 @@ module SlackMessenger extend ActiveSupport::Concern
       response = RestClient.get("https://yoda.p.mashape.com/yoda?sentence=#{words[2..-1].join("+")}",
         "X-Mashape-Key" => ENV['MASHAPE_API_KEY'],
         "Accept" => "application/json")
-      post_message(request, response)
+      update_message(request, response)
     when "trivia"
       question = get_trivia_question(request)
-      post_message(request, question)
+      update_message(request, question)
     when "trivia-ans"
       trivia_answer = TriviaAnswer.where(:channel_id => request[:slack_channel_id])
       if !trivia_answer.last.nil?
-        post_message(request, "Answer: #{trivia_answer.last.answer}")
+        update_message(request, "Answer: #{trivia_answer.last.answer}")
       end
     else
       if words.fetch(1, nil)
@@ -135,6 +135,6 @@ module SlackMessenger extend ActiveSupport::Concern
     TriviaAnswer.create(:channel_id => request[:slack_channel_id], :answer => response.first[:answer])
     question = response.first[:question]
     category = response.first[:category][:title]
-    message = "Category: #{category}\n Question: #{question}"
+    message = "```Category: #{category}\n Question: #{question}```"
   end
 end

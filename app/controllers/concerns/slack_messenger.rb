@@ -66,7 +66,9 @@ module SlackMessenger extend ActiveSupport::Concern
       :token   => user.access_token,
       :channel => request[:slack_channel_id],
       :text    => message,
-      :as_user => true
+      :as_user => true,
+      :unfurl_media => true,
+      :unfurl_links => true
     )
   end
 
@@ -77,7 +79,9 @@ module SlackMessenger extend ActiveSupport::Concern
       :token   => user.access_token,
       :channel => request[:slack_channel_id],
       :ts      => request[:timestamp],
-      :text    => message
+      :text    => message,
+      :unfurl_media => true,
+      :unfurl_links => true
     )
   end
 end

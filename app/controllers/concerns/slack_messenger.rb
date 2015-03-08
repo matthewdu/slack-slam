@@ -92,6 +92,10 @@ module SlackMessenger extend ActiveSupport::Concern
       if !trivia_answer.last.nil?
         post_message(request, "Answer: #{trivia_answer.last.answer}")
       end
+    when "joke"
+      response = JSON.parse(RestClient.get("http://api.icndb.com/jokes/random?escape=javascript"),
+        :symbolize_names => true)
+      post_message(request, response[:value][:joke])
     else
       if words.fetch(1, nil)
         key = words.fetch(1, nil)

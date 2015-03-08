@@ -50,6 +50,6 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find params[:id]
-    @commands = [] || @user.commands
+    @commands = @user.commands
   end
 end

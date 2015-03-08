@@ -53,9 +53,9 @@ module SlackMessenger extend ActiveSupport::Concern
           "Accept" => "application/json"),
           :symbolize_names => true)
       if response[0].has_key?(:code)
-        post_message(request, "Could not find weather for #{words[2..-1].join(" ")}")
+        update_message(request, "Could not find weather for `#{words[2..-1].join(" ")}`")
       else
-        post_message(request, "In #{words[2..-1].join(" ")}, today is #{response[0][:condition]} with a high of #{response[0][:high_celsius]} degrees and a low of #{response[0][:low_celsius]} degrees.")
+        update_message(request, "In #{words[2..-1].join(" ")}, today is #{response[0][:condition]} with a high of #{response[0][:high_celsius]} degrees and a low of #{response[0][:low_celsius]} degrees.")
       end
     else
       if words.fetch(1, nil)

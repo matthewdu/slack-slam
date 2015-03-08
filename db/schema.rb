@@ -16,6 +16,15 @@ ActiveRecord::Schema.define(version: 20150308000458) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "teams", force: :cascade do |t|
+    t.integer  "slack_team_id"
+    t.string   "slack_team_name"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "teams", ["slack_team_id"], name: "index_teams_on_slack_team_id", using: :btree
+
   create_table "commands", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "key"

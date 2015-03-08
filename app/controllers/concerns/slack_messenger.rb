@@ -57,7 +57,16 @@ module SlackMessenger extend ActiveSupport::Concern
         ), :symbolize_names => true)
 
         response[:messages].each do |message|
-          if message[:user] != user.slack_user_id && message[:type] == 'message'
+          if message[:attachments].present? && message[:attachments][:image_url].present?
+            if command = user.commands.find_by(:key => key)
+              command.update(:value => message[:attachments][:image_url])
+              update_message(request, "`#{key}` has been mapped to `#{message[:attachments][:image_url]}`")
+            else
+              user.commands.create(:key => key, :value => message[:attachments][:image_url])
+              update_message(request, "`#{key}` has been mapped to `#{message[:attachments][:image_url]}`")
+            end
+            return
+          elsif message[:user] != user.slack_user_id && message[:type] == 'message'
             if command = user.commands.find_by(:key => key)
               command.update(:value => message[:text])
               update_message(request, "`#{key}` has been mapped to `#{message[:text]}`")

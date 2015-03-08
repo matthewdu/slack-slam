@@ -96,6 +96,12 @@ module SlackMessenger extend ActiveSupport::Concern
       response = JSON.parse(RestClient.get("http://api.icndb.com/jokes/random?escape=javascript"),
         :symbolize_names => true)
       post_message(request, response[:value][:joke])
+    when "quote"
+      response = JSON.parse(RestClient.get("https://andruxnet-random-famous-quotes.p.mashape.com/cat=movies",
+        "X-Mashape-Key" => ENV['MASHAPE_API_KEY'],
+        "Accept" => "application/json"),
+        :symbolize_names => true)
+      post_message(request, "#{response[:quote]} --#{response[:author]}")
     else
       if words.fetch(1, nil)
         key = words.fetch(1, nil)

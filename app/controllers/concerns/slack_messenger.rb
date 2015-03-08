@@ -10,7 +10,7 @@ module SlackMessenger extend ActiveSupport::Concern
   end
 
   def tokenize_message(lower_case_message)
-     if /^slam\!/ =~ lower_case_message
+     if /^slam/ =~ lower_case_message
       return lower_case_message.split
      else
       return nil

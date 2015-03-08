@@ -28,10 +28,10 @@ module SlackMessenger extend ActiveSupport::Concern
       if (key && value)
         if command = user.commands.find_by(:key => key)
           command.update(:value => value)
-          post_message(request, "#{key} has been updated to #{value}") #change to update
+          update_message(request, "#{key} has been updated to #{value}") #change to update
         else
           if user.commands.create(:key => key, :value => value)
-            post_message(request, "#{key} has been mapped to #{value}") #change to update
+            update_message(request, "#{key} has been mapped to #{value}") #change to update
           else
             #ERROR
           end

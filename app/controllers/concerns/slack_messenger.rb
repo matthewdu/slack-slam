@@ -82,6 +82,11 @@ module SlackMessenger extend ActiveSupport::Concern
       else
         update_message(request, "In #{words[2..-1].join(" ")}, today is #{response[0][:condition]} with a high of #{response[0][:high_celsius]} degrees and a low of #{response[0][:low_celsius]} degrees.")
       end
+    when "yoda"
+      response = RestClient.get("https://yoda.p.mashape.com/yoda?sentence=#{words[2..-1].join("+")}",
+        "X-Mashape-Key" => ENV['MASHAPE_API_KEY'],
+        "Accept" => "application/json")
+      post_message(request, response)
     else
       if words.fetch(1, nil)
         key = words.fetch(1, nil)

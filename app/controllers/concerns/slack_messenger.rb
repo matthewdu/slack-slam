@@ -21,13 +21,12 @@ module SlackMessenger extend ActiveSupport::Concern
     team = Team.find_by(:slack_team_id => request[:slack_team_id])
     user = team.users.find_by(:slack_user_id => request[:slack_user_id])
 
-    case words.index(1)
+    case words.fetch(1, nil)
     when "add"
-      key = words.index(2)
-      value = words.index(3)
+      key = words.fetch(2, nil)
+      value = words.fetch(3, nil)
       if (key && value)
         if user.commands.create(:key => key, :value => value)
-          byebug
           post_message(request, "#{key} has been mapped to #{value}") #change to update
         else
           #ERROR
@@ -41,9 +40,9 @@ module SlackMessenger extend ActiveSupport::Concern
         end
         post_message(request, message)
     else
-      if words.index(1)
-        key = words.index(1)
-        value = user.commands.find_by(:key => key)
+      if words.fetch(1, nil)
+        key = words.fetch(1, nil)
+        value = user.commands.find_by(:key => key).value
         if value
           post_message(request, value)
         else

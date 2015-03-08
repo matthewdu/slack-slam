@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :commands
+  post 'message', to: 'commands#message', :as => :message
   resources :users, :only => [:show, :index, :new] do
     get :callback, :on => :collection
   end

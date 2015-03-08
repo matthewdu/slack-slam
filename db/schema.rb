@@ -11,9 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20150308000458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "commands", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "key"
+    t.string   "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "commands", ["user_id", "key"], name: "index_commands_on_user_id_and_key", unique: true, using: :btree
+  add_index "commands", ["user_id"], name: "index_commands_on_user_id", using: :btree
 
 end

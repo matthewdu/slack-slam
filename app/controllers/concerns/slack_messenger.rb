@@ -145,6 +145,6 @@ module SlackMessenger extend ActiveSupport::Concern
     TriviaAnswer.create(:channel_id => request[:slack_channel_id], :answer => response.first[:answer])
     question = response.first[:question]
     category = response.first[:category][:title]
-    message = "Category: #{category}\n Question: #{question}"
+    message = "```Category: #{category}\nQuestion: #{question}```"
   end
 end

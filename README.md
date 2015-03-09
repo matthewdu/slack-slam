@@ -38,6 +38,6 @@ slam uwaterloo #=> is an awesome university
 ```
 
 ### Contributors
-* [Angel Gao](github.com/angelgao)
-* [Jason Loo](github.com/nosajool)
-* [Matthew Du](github.com/matthewdu)
+* [Angel Gao](https://github.com/angelgao)
+* [Jason Loo](https://github.com/nosajool)
+* [Matthew Du](https://github.com/matthewdu)

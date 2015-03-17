@@ -6,7 +6,7 @@ A key-value store for Slack
 To use, add an outgoing webhook in Slack integrations pointing to `slack-slam.herokuapp.com/message` and make the trigger word `slam`
 ![Imgur](http://i.imgur.com/wlQILQC.png)
 
-Then, just visit [slack-slam.herokuapp.com](slack-slam.herokuapp.com) and authorize yourself.
+Then, just visit [slack-slam.herokuapp.com](http://slack-slam.herokuapp.com) and authorize yourself.
 
 ### Usage
 Basic Commands

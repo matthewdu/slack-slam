@@ -26,40 +26,4 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-12">
-    <h3>Commands</h3>
-
-    <span>Show link to this page</span>
-    <pre>slam help</pre>
-
-    <span>Add a new key</span>
-    <pre>slam add 'key' 'value'</pre>
-
-    <span>Reference a key</span>
-    <pre>slam 'key'</pre>
-
-    <span>List all keys</span>
-    <pre>slam list</pre>
-
-    <span>Save the last message posted by someone else to a key</span>
-    <pre>slam save 'key'</pre>
-
-    <h3>Bonus</h3>
-    <span>Weather</span>
-    <pre>slam weather 'location'</pre>
-
-    <span>Trivia</span>
-    <pre>slam trivia</pre>
-    <pre>slam trivia-ans</pre>
-
-    <span>Yoda speak</span>
-    <pre>slam yoda 'a string of sentence'</pre>
-
-    <span>Jokes</span>
-    <pre>slam joke</pre>
-
-    <span>Movie Quotes</span>
-    <pre>slam quote</pre>
-  </div>
-</div>
+<%= render :partial => "users/commands" %>

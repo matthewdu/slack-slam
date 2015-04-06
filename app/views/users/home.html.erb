@@ -4,3 +4,5 @@
   <p><%= link_to 'Authorize', new_user_path, :class => 'btn btn-primary btn-lg', :role => 'button' %></p>
   <p><%= link_to 'People using Slam!', users_path, :class => 'btn btn-success btn-lg', :role => 'button' %></p>
 </div>
+
+<%= render :partial => "users/commands" %>
